@@ -1,21 +1,28 @@
-from backend.utils import validateLogin, idGenerator, passwordEncode, emailVerify, validateRegister, validateRetrieve
-from backend.connection import openConnection
-from datetime import datetime,timezone,timedelta
 from mysql.connector import errorcode
-from backend.facialRecognizer import faceRecognition
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+if os.getenv("LOCAL") == 'dev':
+    from connection import openConnection
+    from utils import validateLogin, idGenerator, passwordEncode, emailVerify, validateRegister, validateRetrieve, validateGreenRegister,dateCapture, validateElementRegister
+    from facialRecognizer import faceRecognition
+
+else:
+    from backend.connection import openConnection
+    from backend.utils import validateLogin, idGenerator, passwordEncode, emailVerify, validateRegister, validateRetrieve, validateGreenRegister,dateCapture
+    from backend.facialRecognizer import faceRecognition
 
 
 # Função que valida usuário
 def login(user):
-    print('login-10')
     data = validateLogin(user)
     
     if data['status'] == 'erro':
-        print('login-14')
         return data
     
     else:
-        print('login-18')
 
         email = data['user']['email']
         password = data['user']['password']
@@ -90,8 +97,9 @@ def getUser(idUser,nomeUser):
                     for element in cursor.stored_results():
                         row = element.fetchall()
                         for e in row:
-                            elem={"nomeelem": e[0],
-                            "ativo":e[1]
+                            elem={"tipoelem": e[0],
+                            "nomeelem": e[1],
+                            "ativo":e[2]
                             }
                             elements.append(elem)
                     greenery['elementos'] = elements
@@ -129,13 +137,13 @@ def register(user):
                 idUser = idGenerator()
                 nome = user['name']
                 senha = passwordEncode(user['password'])
-                data = (datetime.now().astimezone(timezone(timedelta(hours=-3)))).strftime('%Y/%m/%d')
+                data =  dateCapture()
                 foto = user['photo']
                 email = user['email']
                 
                 cursor = conn.cursor()
 
-                result_args = cursor.callproc('userRegister',[idUser,nome,email,senha,data,foto])
+                cursor.callproc('userRegister',[idUser,nome,email,senha,data,foto])
 
                 cursor.close()
 
@@ -191,10 +199,80 @@ def retrieve(user):
         return ('ok')
 
     except Exception as error:
-        print (error)
         return({'message':{'title':'Erro',
                 'content': str(error)},
                 'status':'erro'})      
     finally:
                 conn.commit()
                 conn.close()
+
+# função que registra estufas no banco de dados
+def greenregister(green):
+    try:
+        conn = openConnection()
+        if type(conn) == dict:
+            return conn
+
+        verifiedGreen = validateGreenRegister(green)
+        if type(verifiedGreen) == dict:
+            return verifiedGreen
+
+        name = green['name']
+        iduser = green['iduser']
+        photo = green['photo']
+        date = dateCapture()
+        idgreen = idGenerator()
+
+        cursor = conn.cursor()
+        
+        cursor.callproc('greenRegister',[idgreen, name, date, photo, iduser])
+
+        cursor.close()
+        return({'message':{'title':'Sucesso',
+                'content':'Estufa cadastrada com sucesso!'},
+                'status':'ok'})
+    
+    except Exception as err:
+        return({'message':{'title':'Erro',
+                'content': str(err)},
+                'status':'erro'})
+    finally:
+        conn.commit()
+        conn.close()
+
+# função que registra elementos no banco de dados
+def elementregister(element):
+    try:
+        conn = openConnection()
+        print(conn)
+        if type(conn) == dict:
+            return conn
+        
+        verifiedelement = validateElementRegister(element)
+        if type(verifiedelement) == dict:
+            return verifiedelement
+        
+        idelem = idGenerator()
+        nameelem = element['name']
+        typeelem = element['type']
+        idgreen = element['idgreen']
+        date = dateCapture()
+
+        cursor = conn.cursor()
+        cursor.callproc('elementRegister',[idelem,typeelem,idgreen,date,nameelem])
+        cursor.close()
+
+        return({'message':{'title':'Sucesso',
+                'content':'Elemento cadastrado com sucesso!'},
+                'status':'ok'})
+
+    except Exception as err:
+        return({'message':{'title':'Erro',
+            'content': str(err)},
+            'status':'erro'})
+
+    finally:
+        conn.commit()
+        conn.close()
+
+    
