@@ -25,6 +25,7 @@ class openConnection():
     def getConnection(self):
         try:
             conn = mysql.connector.connect(**self.config)
+            
             print("Acesso ao banco de dados: Conexão Estabelecida")
         except mysql.connector.Error as err:
             return({'status':'erro', 'message': 'Falha na conexão com o banco de dados'})
