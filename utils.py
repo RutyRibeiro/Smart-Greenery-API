@@ -1,5 +1,4 @@
 from datetime import datetime,timezone,timedelta
-from utilsk import passwordEncode
 from validate_email import validate_email
 import uuid
 import hashlib
@@ -8,6 +7,7 @@ import os
 
 load_dotenv()
 
+# Classe para validação de formulários
 class Validate():
 
     def __init__(self):
@@ -24,13 +24,10 @@ class Validate():
                     "message":"Campos validados"
                     })
         except Exception as error:
-            # verificar porque não está devolvendo toda mensagem de erro em 'content'
-            erro = str(error)
             return({'message':{'title':'Erro',
-                'content': erro},
+                'content': str(error)},
                 'status':'erro'})
 
-    
     def _verifyIsEmpty(self):
         try:
             for field in self.param:
@@ -45,15 +42,19 @@ class Validate():
                 'content': str(error)},
                 'status':'erro'})
 
-    def validadeForm(self):
+    def validateForm(self,form,param):
+        self.param= param
+        self.form = form
+
         verifyExistance = self._verifyExistance()
-        print(verifyExistance)
-        if 'erro' in verifyExistance:
+
+        if verifyExistance['status'] == 'erro':
             return verifyExistance
         
         return self._verifyIsEmpty()
 
 
+# Classe para funções uteis 
 class utils():
     # codifica senha no padrão MD5
     def passwordEncode(self, password):
@@ -76,15 +77,14 @@ class utils():
         date = (datetime.now().astimezone(timezone(timedelta(hours=-3)))).strftime('%Y/%m/%d')
         return date
 
-
-# validacao = Validate()
-# validacao.form={
+# form={
 #     "email":"ruty.pena@gmail.com",
 #     # "senha":"senha"
 # }
-# validacao.param = ['email','senha']
+# param = ['email','senha']
+# validacao= Validate()
 
-# print(validacao.validadeForm())
+# print(validacao.validateForm(form=form, param=param))
 
 
 

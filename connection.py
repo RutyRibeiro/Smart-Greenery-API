@@ -4,7 +4,7 @@ import os
 
 load_dotenv()
 
-class openConnection():
+class Connection():
     # define dados refentes ao banco de dados
     def __init__(self):
         self.config = {
@@ -22,7 +22,7 @@ class openConnection():
             # 'ssl_disabled': True
         }
 
-    def getConnection(self):
+    def openConnection(self):
         try:
             conn = mysql.connector.connect(**self.config)
 
@@ -33,15 +33,16 @@ class openConnection():
             return conn
     
     def closeConnection(self, conn):
-        conn.commit()
-        conn.close()
+        try:
+            conn.commit()
+            conn.close()
+            print("Conexão com banco de dados encerrada")
+        except:
+            print("Falha ao encerrar conexão com banco de dados")
 
 
 
 
-connection = openConnection()
 
-print(connection.getConnection())
-    
     
         
