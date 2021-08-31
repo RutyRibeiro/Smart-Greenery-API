@@ -1,7 +1,5 @@
-from mysql.connector import connect, errorcode
 import os
-import connection
-import utils
+from utils import Validate, utils
 
 class User():
 
@@ -11,10 +9,22 @@ class User():
         self.password =''
         self.name=''
         self.date=''
+
+    def _openAndValidateConnection(self):
+        connect = connection.Connection()
+
+        conn = connect.openConnection()
+        
+        return conn
+    
+    def _closeConnection(self,conn):
+        connect = connection.Connection()
+        
+        connect.closeConnection(conn=conn)
     
     def _validateUserLogin(self, user):
         try:
-            valida=utils.Validate()
+            valida = Validate()
             
             param = ['email','senha']
             validate = valida.validateForm(form = user, param = param)
@@ -31,20 +41,8 @@ class User():
             return({'message':{'title':'Erro',
                 'content': str(error)},
                 'status':'erro'})
-
-    def _openAndValidateConnection(self):
-        connect = connection.Connection()
-
-        conn = connect.openConnection()
-        
-        return conn
     
-    def _closeConnection(self,conn):
-        connect = connection.Connection()
-        
-        connect.closeConnection(conn=conn)
-    
-    def _getUserDB(self):
+    def _userExistsAndValidatePassword(self):
         try:
             conn = self._openAndValidateConnection()
 
@@ -61,6 +59,18 @@ class User():
             cursor.close()
 
             self._closeConnection(conn=conn)
+
+            if len(row) == 0:
+                    raise Exception('Email ou senha incorreto(s)!')
+            
+            encode=utils()
+
+            if encode.passwordEncode(password = self.password) != row[0][3]:
+                raise Exception('Email ou senha incorreto(s)!')
+
+            self.id = row[0][0]
+            self.name = row[0][1]
+
             
             return ({'message':{'title':'sucesso',
                 'content': 'Usuário existente no banco de dados'},
@@ -71,6 +81,17 @@ class User():
                 'content': str(error)},
                 'status':'erro'})
     
+    # def getUser(self):
+    #     try:
+    #         conn = self._openAndValidateConnection()
+
+    #         if type(conn) == dict:
+    #             raise Exception (conn['message'])
+            
+    #         cursor = conn.cursor()
+
+
+    
     def login(self, user):
         try:
             validate = self._validateUserLogin(user=user)
@@ -78,7 +99,7 @@ class User():
             if validate['status'] == 'erro':
                 raise Exception(validate['message']['content'])
             
-            getUser = self._getUserDB()
+            getUser = self._userExistsAndValidatePassword()
 
             if getUser['status'] == 'erro':
                 raise Exception(getUser['message']['content'])
@@ -93,7 +114,7 @@ class User():
 
 user1={
         "email":"teste@teste.com",
-        "senha":"123"
+        "senha":"teste45"
     }
 usera=User()
 
