@@ -5,3 +5,4 @@ front-end/node_modules
 front-end/yarn.lock
 front-end/.env
 node_modules
+**/__pycache__
