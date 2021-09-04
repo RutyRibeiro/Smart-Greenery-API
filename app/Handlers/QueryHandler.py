@@ -1,7 +1,7 @@
-# import sys
-# sys.path.append('../')
-from ResponseHandler import ResponseHandler
-from ConnectionHandler import Connection
+import sys
+sys.path.append('../')
+from app.Handlers.ResponseHandler import ResponseHandler
+from app.Handlers.ConnectionHandler import Connection
 
 
 class QueryHandler():
@@ -31,11 +31,3 @@ class QueryHandler():
         finally:
             self.cursor.close()
             self.connection.closeConnection(conn=self.conn)
-            
-execquery = QueryHandler()
-# print(execquery.queryExec(proc='userRegister',operationType='insert',variables=['assassde','teste','ro@teste.com','123',date.dateCapture(),'https://via.placeholder.com/150']))
-print(execquery.queryExec(operationType='select',proc='loginTeste',variables=['r',]))
-    
-    
-
-    
