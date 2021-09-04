@@ -1,6 +1,7 @@
 import mysql.connector
 from dotenv import load_dotenv
 import os
+from ResponseHandler import ResponseHandler
 
 load_dotenv()
 
@@ -21,6 +22,7 @@ class Connection():
             # 'password': os.environ.get("PASSWORD"),
             # 'ssl_disabled': True
         }
+        self.responseHandler = ResponseHandler()
 
     def openConnection(self):
         try:
@@ -28,7 +30,7 @@ class Connection():
 
             print("Acesso ao banco de dados: Conexão Estabelecida")
         except mysql.connector.Error as err:
-            return({'status':'erro', 'message': 'Falha na conexão com o banco de dados'})
+            return self.responseHandler.error(title='erro',content='Falha na conexão com o banco de dados')
         else:
             return conn
     
