@@ -1,6 +1,7 @@
 import sys
 sys.path.append('../')
 from utils import Validate, utils
+from ..Handlers.ResponseHandler import ResponseHandler
 
 class User():
 
@@ -10,18 +11,7 @@ class User():
         self.password =''
         self.name=''
         self.date=''
-
-    def _openAndValidateConnection(self):
-        connect = connection.Connection()
-
-        conn = connect.openConnection()
-        
-        return conn
-    
-    def _closeConnection(self,conn):
-        connect = connection.Connection()
-        
-        connect.closeConnection(conn=conn)
+        self.responseHandler = ResponseHandler()
     
     def _validateUserLogin(self, user):
         try:
@@ -39,9 +29,8 @@ class User():
             return validate
         
         except Exception as error:
-            return({'message':{'title':'Erro',
-                'content': str(error)},
-                'status':'erro'})
+            return self.responseHandler.error(title='Erro',content=str(error))
+
     
     def _userExistsAndValidatePassword(self):
         try:
@@ -72,10 +61,7 @@ class User():
             self.id = row[0][0]
             self.name = row[0][1]
 
-            
-            return ({'message':{'title':'sucesso',
-                'content': 'Usuário existente no banco de dados'},
-                'status':'ok'})
+            return self.responseHandler.success(title='Sucesso',content='Usuário existente no banco de dados')
         
         except Exception as error:
             return({'message':{'title':'Erro',
