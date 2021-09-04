@@ -1,4 +1,6 @@
-from ..Handlers import ResponseHandler
+import sys
+sys.path.append('../')
+from app.Handlers import ResponseHandler
 class Validate():
 
     def __init__(self):
