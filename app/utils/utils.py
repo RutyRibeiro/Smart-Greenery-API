@@ -7,52 +7,6 @@ import os
 
 load_dotenv()
 
-# Classe para validação de formulários
-class Validate():
-
-    def __init__(self):
-        self.param = []
-        self.form = {}
-    
-    def _verifyExistance(self):
-        try:
-            for field in self.param:
-                if field not in self.form:
-                    raise Exception(f"O campo {field} é inexistente")
-            return({
-                    "status":"ok",
-                    "message":"Campos validados"
-                    })
-        except Exception as error:
-            return({'message':{'title':'Erro',
-                'content': str(error)},
-                'status':'erro'})
-
-    def _verifyIsEmpty(self):
-        try:
-            for field in self.param:
-                if self.form[field] is None or self.form[field] =='':
-                    raise Exception(f"O campo {field} está vazio")
-            return({
-                    "status":"ok",
-                    "message":"Campos validados"
-                    })            
-        except Exception as error:
-            return({'message':{'title':'Erro',
-                'content': str(error)},
-                'status':'erro'})
-
-    def validateForm(self,form,param):
-        self.param= param
-        self.form = form
-
-        verifyExistance = self._verifyExistance()
-
-        if verifyExistance['status'] == 'erro':
-            return verifyExistance
-        
-        return self._verifyIsEmpty()
-
 
 # Classe para funções uteis 
 class utils():
