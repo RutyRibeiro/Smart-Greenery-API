@@ -1,10 +1,14 @@
 import sys
 sys.path.append('../')
-from utils import Validate, utils
-from ..Handlers.ResponseHandler import ResponseHandler
+from dns.resolver import query
+from app.utils.validate import Validate
+from app.utils.utils import utils
+from app.Handlers.ResponseHandler import ResponseHandler
+from app.Handlers.QueryHandler import QueryHandler
+
 
 class User():
-
+    
     def __init__(self):
         self.id = ''
         self.email =''
@@ -34,39 +38,29 @@ class User():
     
     def _userExistsAndValidatePassword(self):
         try:
-            conn = self._openAndValidateConnection()
+            queryHandler = QueryHandler()
 
-            if type(conn) == dict:
-                raise Exception (conn['message'])
-            
-            cursor = conn.cursor()
+            queryResult = queryHandler.queryExec(operationType='select',variables=[self.email],proc='loginTeste')
 
-            cursor.callproc('loginTeste', [self.email,])
-                
-            for result in cursor.stored_results():
-                row = result.fetchall()
+            if type(queryResult) == dict:
+                return queryResult
 
-            cursor.close()
-
-            self._closeConnection(conn=conn)
-
-            if len(row) == 0:
-                    raise Exception('Email ou senha incorreto(s)!')
+            if len(queryResult) == 0:
+                    raise Exception('Credenciais inválidas!')
             
             encode=utils()
 
-            if encode.passwordEncode(password = self.password) != row[0][3]:
-                raise Exception('Email ou senha incorreto(s)!')
+            if encode.passwordEncode(password = self.password) != queryResult[0][3]:
+                raise Exception('Credenciais inválidas!')
 
-            self.id = row[0][0]
-            self.name = row[0][1]
+            self.id = queryResult[0][0]
+            self.name = queryResult[0][1]
 
             return self.responseHandler.success(title='Sucesso',content='Usuário existente no banco de dados')
         
         except Exception as error:
-            return({'message':{'title':'Erro',
-                'content': str(error)},
-                'status':'erro'})
+            return self.responseHandler.error(title='erro',content=str(error))
+
     
     # def getUser(self):
     #     try:
@@ -84,19 +78,18 @@ class User():
             validate = self._validateUserLogin(user=user)
 
             if validate['status'] == 'erro':
-                raise Exception(validate['message']['content'])
+                return validate
             
             getUser = self._userExistsAndValidatePassword()
 
             if getUser['status'] == 'erro':
-                raise Exception(getUser['message']['content'])
+                return getUser
                 
             return getUser
             
         except Exception as error:
-            return({'message':{'title':'Erro',
-                'content': str(error)},
-                'status':'erro'})
+            return self.responseHandler.error(title='erro',content=str(error))
+
 
 
 user1={
