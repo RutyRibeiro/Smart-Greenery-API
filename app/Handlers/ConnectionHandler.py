@@ -1,7 +1,9 @@
+import sys
+sys.path.append('../')
 import mysql.connector
 from dotenv import load_dotenv
 import os
-from ResponseHandler import ResponseHandler
+from app.Handlers.ResponseHandler import ResponseHandler
 
 load_dotenv()
 
