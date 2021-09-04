@@ -1,10 +1,9 @@
 class ResponseHandler():
     
-    print(__name__)
     def error(self, title, content):
         try:
-            resp = {'message': {'title': title,
-                    'content': content},
+            resp = {'message': {'title': title.captalize(),
+                    'content': content.captalize()},
                     'status': 'erro'}
             return resp
         
@@ -15,8 +14,8 @@ class ResponseHandler():
     
     def success(self, title, content):
         try:
-            resp = {'message': {'title': title,
-                    'content': content},
+            resp = {'message': {'title': title.captalize(),
+                    'content': content.captalize()},
                     'status': 'ok'}
             return resp
         except:
