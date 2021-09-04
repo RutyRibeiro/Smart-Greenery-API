@@ -1,9 +1,8 @@
-import sys
-sys.path.append('../')
-from mysql.connector import connection
-from connection import Connection
-from utils import utils
+# import sys
+# sys.path.append('../')
 from ResponseHandler import ResponseHandler
+from ConnectionHandler import Connection
+
 
 class QueryHandler():
 
@@ -11,15 +10,15 @@ class QueryHandler():
         self.connection = Connection()
         self.conn = self.connection.openConnection()
         self.cursor = self.conn.cursor()
+        self.responseHandler = ResponseHandler()
 
     def queryExec(self, operationType, variables, proc=None):
-        responseHandler=ResponseHandler()
         try:
             if proc:
                 self.cursor.callproc(proc,variables)
 
                 if operationType =='insert' or operationType =='update' :
-                    return responseHandler.success(title='Sucesso', content = 'Operação realizada com sucesso!')
+                    return self.responseHandler.success(title='Sucesso', content = 'Operação realizada com sucesso!')
                 
                 else:
                     for result in self.cursor.stored_results():
@@ -27,13 +26,12 @@ class QueryHandler():
                     return row  
 
         except Exception as error:
-            return responseHandler.error(title='Erro', content = error)
+            return self.responseHandler.error(title='Erro', content = error)
         
         finally:
             self.cursor.close()
             self.connection.closeConnection(conn=self.conn)
-
-date= utils()
+            
 execquery = QueryHandler()
 # print(execquery.queryExec(proc='userRegister',operationType='insert',variables=['assassde','teste','ro@teste.com','123',date.dateCapture(),'https://via.placeholder.com/150']))
 print(execquery.queryExec(operationType='select',proc='loginTeste',variables=['r',]))
