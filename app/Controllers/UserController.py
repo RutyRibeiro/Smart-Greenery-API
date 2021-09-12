@@ -1,5 +1,6 @@
 if __name__ == 'app.Controllers.UserController':
     from ..Handlers.ResponseHandler import ResponseHandler
+    from ..Controllers.GreenerysController import Greenery
     from ..Handlers.QueryHandler import QueryHandler
     from ..utilities.validate import Validate
     from ..utilities.utils import utils
@@ -9,6 +10,7 @@ else:
     from utilities.utils import utils
     from utilities.validate import Validate
     from Handlers.QueryHandler import QueryHandler
+    from Controllers.GreenerysController import Greenery
     from Handlers.ResponseHandler import ResponseHandler
 
 responseHandler = ResponseHandler()
@@ -117,10 +119,10 @@ class User():
             if validateRegister['status'] == 'erro':
                 raise Exception (validateRegister['mensagem']['conteudo'])
 
-            self.id = utils.idGenerator()
+            self.id = Utils.idGenerator()
             self.name = user['nome']
-            self.password = utils.passwordEncode(user['senha'])
-            self.date = utils.dateCapture()
+            self.password = Utils.passwordEncode(user['senha'])
+            self.date = Utils.dateCapture()
             # foto = user['photo']
             self.email = user['email']
 
@@ -130,6 +132,12 @@ class User():
 
             if queryResult['status'] == 'erro':
                 return queryResult
+
+            greenery = Greenery()
+            newGreenery = greenery.createGreenery(userId=self.id)
+
+            if newGreenery['status'] =='erro':
+                return newGreenery
 
             return responseHandler.success(content='Usuário cadastrado com sucesso!')
  
