@@ -1,10 +1,15 @@
+from app.Controllers.GreenerysController import Greenery
+import sys
+sys.path.append('../')
 from app import app
 from flask_cors import CORS, cross_origin
-from flask import request, jsonify
-from .Handlers import ResponseHandler
-
-responseHandler = ResponseHandler.ResponseHandler()
-
+from flask import request
+from .Handlers.ResponseHandler import ResponseHandler
+from .Controllers.UserController import User
+from .Controllers.GreenerysController import Greenery
+responseHandler = ResponseHandler()
+user = User()
+greenery= Greenery()
 @app.route('/')
 
 @app.route('/index')
@@ -14,7 +19,7 @@ def index():
 @app.route('/user/get', methods=['GET'])
 @cross_origin(origin='*',headers=['Content-Type'])
 def getUser():
-    userEmail = request.headers.get('user-email') or False
+    userEmail = request.headers.get('user-email') or False 
     if(userEmail == False):
         return responseHandler.error('Erro', 'Não foram enviadas as informações necessárias nos headers'), 400
     
@@ -23,13 +28,14 @@ def getUser():
 @app.route('/user/register/', methods=['POST'])
 @cross_origin(origin='*',headers=['Content-Type'])
 def createUser():
-    return 'Usuário criado', 201
+    response = user.register(request.get_json())
+    return response
 
 @app.route('/user/login/', methods=['POST'])
 @cross_origin(origin='*',headers=['Content-Type'])
 def logUser():
-    return 'O usuário esta logado',300
-
+    response = user.login(request.get_json())
+    return response
 
 @app.route('/user/modify/', methods=['PUT'])
 @cross_origin(origin='*',headers=['Content-Type'])
@@ -56,10 +62,20 @@ def deletePlant():
 def modifyPlant():
     return 'Planta alterada',200
 
+@app.route('/greenery/get', methods=['GET'])
+@cross_origin(origin='*',headers=['Content-Type'])
+def getGreenery():
+    userId = request.headers.get('user-id') or False 
+    if(userId == False):
+        return responseHandler.error('Erro', 'Não foram enviadas as informações de estufa necessárias nos headers'), 400
+   
+    return  greenery.getGreenerys(userId=userId)
+
 @app.route('/greenery/modify', methods=['PUT'])
 @cross_origin(origin='*',headers=['Content-Type'])
 def modifyGreenery():
-    return 'O nome da estufa foi alterado',200
+    response = greenery.modifyGreenery(request.get_json())
+    return response
 
 
 
