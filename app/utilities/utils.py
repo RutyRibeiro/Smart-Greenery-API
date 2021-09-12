@@ -2,11 +2,6 @@ from datetime import datetime,timezone,timedelta
 from validate_email import validate_email
 import uuid
 import hashlib
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
-
 
 # Classe para funções uteis 
 class utils():
@@ -30,20 +25,3 @@ class utils():
     def dateCapture(self):
         date = (datetime.now().astimezone(timezone(timedelta(hours=-3)))).strftime('%Y/%m/%d')
         return date
-
-# form={
-#     "email":"ruty.pena@gmail.com",
-#     # "senha":"senha"
-# }
-# param = ['email','senha']
-# validacao= Validate()
-
-# print(validacao.validateForm(form=form, param=param))
-
-
-
-
-
-
-
-
