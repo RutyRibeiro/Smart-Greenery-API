@@ -2,14 +2,17 @@ if __name__ == 'app.Controllers.GreenerysController':
     from ..Handlers.ResponseHandler import ResponseHandler
     from ..Handlers.QueryHandler import QueryHandler
     from ..utilities.validate import Validate
+    from ..utilities.utils import utils
 else:
     import sys
     sys.path.append('..')
+    from utilities.utils import utils
     from utilities.validate import Validate
     from Handlers.QueryHandler import QueryHandler
     from Handlers.ResponseHandler import ResponseHandler
 
 responseHandler= ResponseHandler()
+Utils = utils() 
 
 class Greenery():
     def __init__(self):
@@ -103,12 +106,23 @@ class Greenery():
 
         except Exception as error:
             return responseHandler.error(content=error)
+    
+    def createGreenery(self, userId):
+        try:
+            self.user_id = userId
+            self.id = Utils.idGenerator()
+            self.name = 'Estufa 1'
+            self.date = Utils.dateCapture()
+            self.photo = 'https://images.pexels.com/photos/5472378/pexels-photo-5472378.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260'
 
-# greenery=Greenery()
+            queryHandler = QueryHandler()
+            queryResult = queryHandler.queryExec(operationType='insert',variables=[self.id,self.name,self.date,self.photo,self.user_id], proc='greenRegister')
+            
+            if queryResult['status']=='erro':
+                return queryResult
+            
+            return responseHandler.success(content='Estufa cadastrada com sucesso!')
 
-# print(greenery.modifyGreenery({
-#     'estufa-nome':'teste',
-#     'estufa-id':'1'
-# }))
-
+        except Exception as error:
+            return responseHandler.error(content=error)
 
