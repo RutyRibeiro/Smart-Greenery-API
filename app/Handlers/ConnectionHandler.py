@@ -1,9 +1,13 @@
-import sys
-sys.path.append('../')
 import mysql.connector
 from dotenv import load_dotenv
 import os
-from app.Handlers.ResponseHandler import ResponseHandler
+
+if __name__ == 'app.Handlers.ConnectionHandler':
+    from ..Handlers.ResponseHandler import ResponseHandler
+else:
+    import sys
+    sys.path.append('..')
+    from Handlers.ResponseHandler import ResponseHandler
 
 load_dotenv()
 
