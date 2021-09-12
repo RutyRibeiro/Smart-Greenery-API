@@ -1,25 +1,25 @@
 class ResponseHandler():
     
-    def error(self, title, content):
+    def error(self, content, title = 'Erro!'):
         try:
-            resp = {'message': {'title': title,
-                    'content': content},
+            resp = {'mensagem': {'titulo': title,
+                    'conteudo': content},
                     'status': 'erro'}
             return resp
         
         except:
-            return({'message': {'title': 'Ops',
-                    'content': 'Erro no servidor'},
+            return({'mensagem': {'titulo': 'Ops',
+                    'conteudo': 'Erro no servidor'},
                     'status': 'erro'})
     
-    def success(self, title, content):
+    def success(self, content, title = 'Sucesso!'):
         try:
-            resp = {'message': {'title': title,
-                    'content': content},
+            resp = {'menssagem': {'titulo': title,
+                    'conteudo': content},
                     'status': 'ok'}
             return resp
         except:
-            return({'message': {'title': 'Ops',
-                    'content': 'Erro no servidor'},
+            return({'menssagem': {'titulo': 'Ops',
+                    'conteudo': 'Erro no servidor'},
                     'status': 'erro'})
             
