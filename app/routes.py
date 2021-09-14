@@ -7,9 +7,13 @@ from flask import request
 from .Handlers.ResponseHandler import ResponseHandler
 from .Controllers.UserController import User
 from .Controllers.GreenerysController import Greenery
+from .Controllers.ElementController import Element
+
 responseHandler = ResponseHandler()
 user = User()
 greenery= Greenery()
+element = Element()
+
 @app.route('/')
 
 @app.route('/index')
@@ -75,6 +79,12 @@ def getGreenery():
 @cross_origin(origin='*',headers=['Content-Type'])
 def modifyGreenery():
     response = greenery.modifyGreenery(request.get_json())
+    return response
+
+@app.route('/element/modify', methods=['PUT'])
+@cross_origin(origin='*',headers=['Content-Type'])
+def modifyElement():
+    response = element.modifyElement(request.get_json())
     return response
 
 
