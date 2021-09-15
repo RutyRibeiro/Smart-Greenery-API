@@ -17,11 +17,24 @@ class QueryHandler():
         self.conn = self.connection.openConnection()
         self.cursor = self.conn.cursor()
         self.responseHandler = ResponseHandler()
+    
+    def massQueryExec(self, variables, proc):
+        try:
+            for i in range(len(variables)):
+                self.cursor.callproc(proc,variables[i])
+
+            return self.responseHandler.success(title='Sucesso', content = 'Operação realizada com sucesso!')
+        
+        except Exception as error:
+            return self.responseHandler.error(content=str(error))
+        
+        finally:
+            self.cursor.close()
+            self.connection.closeConnection(conn=self.conn)
 
     def queryExec(self, operationType, variables, proc=None):
         try:
             if proc:
-                
                 self.cursor.callproc(proc,variables)
 
                 if operationType =='insert' or operationType =='update' :
@@ -38,7 +51,7 @@ class QueryHandler():
             else:
                 return self.responseHandler.error(title='Erro', content = error)
 
-        
         finally:
             self.cursor.close()
             self.connection.closeConnection(conn=self.conn)
+
