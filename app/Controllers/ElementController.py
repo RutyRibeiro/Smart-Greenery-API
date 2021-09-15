@@ -1,5 +1,4 @@
-from time import sleep
-if __name__ == 'app.Controllers.GreenerysController':
+if __name__ == 'app.Controllers.ElementController':
     from ..Handlers.ResponseHandler import ResponseHandler
     from ..Handlers.QueryHandler import QueryHandler
     from ..utilities.validate import Validate
@@ -11,6 +10,7 @@ else:
     from utilities.validate import Validate
     from Handlers.QueryHandler import QueryHandler
     from Handlers.ResponseHandler import ResponseHandler
+
 
 responseHandler = ResponseHandler()
 Utils=utils()
@@ -26,30 +26,50 @@ class Element():
     
     def createElements(self, idEstufa):
         try:
-
-            name = ['Irrigador 1','Irrigador 2','Luz 1','Luz 2','Luz 3','Ventilador 1','Ventilador 2']
-            port = ['D0','D1','D2','D3','D4','D5','D6','D7']
-            tpe = ['Água','Água','Luz','Luz','Luz','Vento','Vento']
-
+            elements = ([Utils.idGenerator(),'Água',idEstufa, Utils.dateCapture(),'Irrigador 1','D0'], 
+                        [Utils.idGenerator(),'Água',idEstufa, Utils.dateCapture(),'Irrigador 2','D1'], 
+                        [Utils.idGenerator(),'Luz',idEstufa, Utils.dateCapture(),'Luz 1','D2'], 
+                        [Utils.idGenerator(),'Luz',idEstufa, Utils.dateCapture(),'Luz 2','D3'], 
+                        [Utils.idGenerator(),'Luz',idEstufa, Utils.dateCapture(),'Luz 3','D4'], 
+                        [Utils.idGenerator(),'Vento',idEstufa, Utils.dateCapture(),'Ventilador 1','D5'], 
+                        [Utils.idGenerator(),'Vento',idEstufa, Utils.dateCapture(),'Ventilador 2','D6']
+            )
             queryHandler=QueryHandler()
-            for i in range(7):
-                self.id = Utils.idGenerator()
-                self.type= tpe[i]
-                self.date = Utils.dateCapture()
-                self.port = port[i]
-                self.name = name[i]
-                self.active = '0'
-                print(i)
-                queryResult = queryHandler.queryExec(operationType='insert',variables=[self.id, self.type, idEstufa, self.date, self.date, self.port], proc='elementRegister')
+           
+            queryResult = queryHandler.massQueryExec(variables=elements, proc='elementRegister')
 
-                if queryResult['status'] =='erro':
-                    return queryResult
-                
-            
+            if queryResult['status'] =='erro':
+                return queryResult
+        
             return responseHandler.success(content='Elementos cadastrados com sucesso!')
         except Exception as error:
-            return responseHandler.success(content=error)
+            return responseHandler.error(content=str(error))
+        
+    def modifyElement(self,form):
+        try:
+            validate = Validate()
 
-elements=Element()
-print(elements.createElements('1'))
+            valForm = validate.validateForm(form=form, param=['elemento-id','elemento-nome'])
+
+            if valForm['status'] == 'erro':
+                return valForm
+
+            self.name= form['elemento-nome']
+            self.id = form['elemento-id']
+
+            queryHandler = QueryHandler()
+
+            modify = queryHandler.queryExec(operationType='update',proc='elementModify', variables=[self.name,self.id])
+
+            if modify['status'] == 'erro':
+                return modify
+            
+            return responseHandler.success(content='Nome do elemento alterado com sucesso!')
+
+        except Exception as error:
+            return responseHandler.error(content=str(error))
+
+e = Element()
+k = e.createElements(idEstufa='1')
+print(k)
 
