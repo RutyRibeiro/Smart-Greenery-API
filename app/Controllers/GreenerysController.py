@@ -1,5 +1,6 @@
 if __name__ == 'app.Controllers.GreenerysController':
     from ..Handlers.ResponseHandler import ResponseHandler
+    from ..Controllers.ElementController import Element
     from ..Handlers.QueryHandler import QueryHandler
     from ..utilities.validate import Validate
     from ..utilities.utils import utils
@@ -9,7 +10,9 @@ else:
     from utilities.utils import utils
     from utilities.validate import Validate
     from Handlers.QueryHandler import QueryHandler
+    from Controllers.ElementController import Element
     from Handlers.ResponseHandler import ResponseHandler
+
 
 responseHandler= ResponseHandler()
 Utils = utils() 
@@ -120,6 +123,12 @@ class Greenery():
             
             if queryResult['status']=='erro':
                 return queryResult
+            
+            element = Element()
+            newElements = element.createElements(idEstufa=self.id)
+
+            if newElements['status'] == 'erro':
+                return newElements
             
             return responseHandler.success(content='Estufa cadastrada com sucesso!')
 
