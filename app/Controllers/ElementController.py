@@ -68,8 +68,3 @@ class Element():
 
         except Exception as error:
             return responseHandler.error(content=str(error))
-
-e = Element()
-k = e.createElements(idEstufa='1')
-print(k)
-
