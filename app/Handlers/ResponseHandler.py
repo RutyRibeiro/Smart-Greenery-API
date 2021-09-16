@@ -3,7 +3,7 @@ class ResponseHandler():
     def error(self, content, title = 'Erro!'):
         try:
             resp = {'mensagem': {'titulo': title,
-                    'conteudo': content},
+                    'conteudo': str(content)},
                     'status': 'erro'}
             return resp
         
@@ -15,7 +15,7 @@ class ResponseHandler():
     def success(self, content, title = 'Sucesso!'):
         try:
             resp = {'menssagem': {'titulo': title,
-                    'conteudo': content},
+                    'conteudo': str(content)},
                     'status': 'ok'}
             return resp
         except:
