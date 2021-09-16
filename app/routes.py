@@ -8,11 +8,13 @@ from .Handlers.ResponseHandler import ResponseHandler
 from .Controllers.UserController import User
 from .Controllers.GreenerysController import Greenery
 from .Controllers.ElementController import Element
+from .Controllers.PlantController import Plant
 
 responseHandler = ResponseHandler()
 user = User()
 greenery= Greenery()
 element = Element()
+plant = Plant()
 
 @app.route('/')
 
@@ -54,7 +56,8 @@ def retrieveUser():
 @app.route('/plant/register', methods=['POST'])
 @cross_origin(origin='*',headers=['Content-Type'])
 def registerPlant():
-    return 'A planta foi criada',201
+    response = plant.createPlant(plant=request.get_json())
+    return response
 
 @app.route('/plant/delete', methods=['DELETE'])
 @cross_origin(origin='*',headers=['Content-Type'])
