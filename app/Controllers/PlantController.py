@@ -1,3 +1,4 @@
+
 if __name__ == 'app.Controllers.PlantController':
     from ..Handlers.ResponseHandler import ResponseHandler
     from ..Handlers.QueryHandler import QueryHandler
@@ -47,8 +48,41 @@ class Plant():
             return responserHandler.success(content='Planta cadastrada com sucesso!')
         
         except Exception as error:
-            return responserHandler.error(content=error)
+            return responserHandler.error(content=str(error))
 
+    def deletePlant(self,idPlant):
+        try:
+            queryHandler = QueryHandler()
+            deletePlant = queryHandler.queryExec(operationType='delete', proc='plantDelete', variables=[idPlant])
+            
+            if deletePlant['status'] == 'error':
+                return deletePlant
+
+            return responserHandler.success(content='Planta Deletada com sucesso!')
+        
+        except Exception as error:
+            return responserHandler.error(content=str(error))
+    
+    def modifyPlant(self,plant):
+        try:
+            validate = Validate()
+            validatePlant = validate.validateForm(form=plant, param=['id-planta','nome-planta'])
+            if validatePlant['status'] == 'error':
+                return validatePlant
+            
+            self.id = plant['id-planta']
+            self.name = plant['nome-planta']
+
+            queryHandler = QueryHandler()
+            modifyPlant = queryHandler.queryExec(proc='plantModify',variables=[self.id,self.name], operationType='update')
+            
+            if modifyPlant['status'] == 'error':
+                return modifyPlant
+        
+            return responserHandler.success(content='Nome alterado com sucesso')
+        except Exception as error:
+            return responserHandler.error(content=error)
+#
 # p=Plant()
-# print(p.createPlant(plant={'id-estufa':'6db7e7cd-98d2-11eb-968d-f5069c8e6f2b','nome-planta':'teste'}))
+# print(p.modifyPlant(plant={'id-planta':'00a74d3b-168c-11ec-9f0e-7085c2d1dbbf','nome-planta':'teste111111111'}))
     
