@@ -37,13 +37,12 @@ class QueryHandler():
             if proc:
                 self.cursor.callproc(proc,variables)
 
-                if operationType =='insert' or operationType =='update' :
-                    return self.responseHandler.success(title='Sucesso', content = 'Operação realizada com sucesso!')
-                
-                else:
+                if operationType =='select':
                     for result in self.cursor.stored_results():
                         row = result.fetchall() 
                     return row  
+                else:
+                    return self.responseHandler.success(title='Sucesso', content = 'Operação realizada com sucesso!')
         
         except mysql.connector.Error as error:
             if error.errno == 1062:
