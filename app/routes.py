@@ -62,12 +62,19 @@ def registerPlant():
 @app.route('/plant/delete', methods=['DELETE'])
 @cross_origin(origin='*',headers=['Content-Type'])
 def deletePlant():
-    return 'A planta foi deletada',200
+    plantId = request.headers.get('id-planta') or False 
+    if(plantId == False):
+        return responseHandler.error('Erro', 'Não foram enviadas as informações de planta necessárias nos headers'), 400
+    
+    response = plant.deletePlant(idPlant=plantId) 
+    
+    return  response
 
 @app.route('/plant/modify', methods=['PUT'])
 @cross_origin(origin='*',headers=['Content-Type'])
 def modifyPlant():
-    return 'Planta alterada',200
+    response = plant.modifyPlant(plant = request.get_json())
+    return response
 
 @app.route('/greenery/get', methods=['GET'])
 @cross_origin(origin='*',headers=['Content-Type'])
