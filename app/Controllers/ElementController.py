@@ -68,3 +68,17 @@ class Element():
 
         except Exception as error:
             return responseHandler.error(content=str(error))
+
+    def getElements(self, idEstufa):
+        try:
+            queryHandler = QueryHandler()
+
+            element = queryHandler.queryExec(operationType='select',variables=[idEstufa],proc='getElements')
+            
+            if type(element) == dict:
+                raise Exception(element['mensagem']['conteudo'])
+            
+            return element
+               
+        except Exception as error:
+            return responseHandler.error(content=error)

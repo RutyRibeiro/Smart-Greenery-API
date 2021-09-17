@@ -2,6 +2,7 @@ if __name__ == 'app.Controllers.GreenerysController':
     from ..Handlers.ResponseHandler import ResponseHandler
     from ..Controllers.ElementController import Element
     from ..Handlers.QueryHandler import QueryHandler
+    from ..Controllers.PlantController import Plant
     from ..utilities.validate import Validate
     from ..utilities.utils import utils
 else:
@@ -9,6 +10,7 @@ else:
     sys.path.append('..')
     from utilities.utils import utils
     from utilities.validate import Validate
+    from Controllers.PlantController import Plant
     from Handlers.QueryHandler import QueryHandler
     from Controllers.ElementController import Element
     from Handlers.ResponseHandler import ResponseHandler
@@ -26,20 +28,6 @@ class Greenery():
         self.date=''
         self.user_id = ''
     
-    def _getElements(self, idEstufa):
-        try:
-            queryHandler = QueryHandler()
-
-            element = queryHandler.queryExec(operationType='select',variables=[idEstufa],proc='getElements')
-            
-            if type(element) == dict:
-                raise Exception(element['mensagem']['conteudo'])
-            
-            return element
-               
-        except Exception as error:
-            return responseHandler.error(content=error)
-    
     def _formatGreenerys(self,green):
         try:
             data=[] 
@@ -51,19 +39,41 @@ class Greenery():
                             "dataestufa": greenery[3],
                             "fotoestufa": greenery[4],
                             }
-                element = self._getElements(idEstufa=idestufa)
+                el = Element()
+                element = el.getElements(idEstufa=idestufa)
                 if type(element) == dict:
                     raise Exception(element['mensagem']['conteudo'])
                 
                 elements = []
                 
                 for e in element:
-                    elem = {"tipoelem": e[2],
-                            "nomeelem": e[5],
-                            "ativo": e[1]
+                    elem = {
+                            "idElem": e[0],
+                            "ativo": e[1],
+                            "tipoElem": e[2],
+                            "dataElem": e[4],
+                            "nomeElem": e[5],
+                            "portElem": e[6],
                             }
                     elements.append(elem)
                 greenery['elementos'] = elements
+                
+                pl = Plant()
+                plants = pl.getPlant(idGreen=idestufa)
+                
+                if type(plants) == dict:
+                    return plants
+                
+                plan = []
+                for p in plants:
+                    plant = {"idPlanta": p[0],
+                            "nomePlanta": p[1],
+                            "dataPlanta": p[2],
+                            "fotoPlanta": p[3]
+                            }
+                    plan.append(plant)
+                greenery['plantas'] = plan
+
                 data.append(greenery)
             return data
         except Exception as error:
