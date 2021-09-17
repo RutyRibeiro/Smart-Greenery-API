@@ -14,8 +14,8 @@ class ResponseHandler():
     
     def success(self, content, title = 'Sucesso!'):
         try:
-            resp = {'menssagem': {'titulo': title,
-                    'conteudo': str(content)},
+            resp = {'mensagem': {'titulo': title,
+                    'conteudo': content},
                     'status': 'ok'}
             return resp
         except:
