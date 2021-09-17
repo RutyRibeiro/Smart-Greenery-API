@@ -22,15 +22,6 @@ plant = Plant()
 def index():
     return "Server ok"
 
-@app.route('/user/get', methods=['GET'])
-@cross_origin(origin='*',headers=['Content-Type'])
-def getUser():
-    userEmail = request.headers.get('user-email') or False 
-    if(userEmail == False):
-        return responseHandler.error('Erro', 'Não foram enviadas as informações necessárias nos headers'), 400
-    
-    return  userEmail
-
 @app.route('/user/register/', methods=['POST'])
 @cross_origin(origin='*',headers=['Content-Type'])
 def createUser():
