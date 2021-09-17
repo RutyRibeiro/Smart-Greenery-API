@@ -82,7 +82,21 @@ class Plant():
             return responserHandler.success(content='Nome alterado com sucesso')
         except Exception as error:
             return responserHandler.error(content=error)
-#
+    
+    def getPlant(self,idGreen):
+        try:
+            queryHandler = QueryHandler()
+
+            plants = queryHandler.queryExec(operationType='select',variables=[idGreen],proc='getPlant')
+            
+            if type(plants) == dict:
+                return plants
+           
+            return plants
+
+        except Exception as error:
+            return responserHandler.error(content=error)
+
 # p=Plant()
-# print(p.modifyPlant(plant={'id-planta':'00a74d3b-168c-11ec-9f0e-7085c2d1dbbf','nome-planta':'teste111111111'}))
+# print(p.getPlant(idGreen='6db7e7cd-98d2-11eb-968d-f5069c8e6f2b'))
     
