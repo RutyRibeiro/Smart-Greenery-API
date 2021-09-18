@@ -1,1 +1,1 @@
-web: gunicorn app.server --pythonpath app --preload -b 0.0.0.0:${PORT}
+web: gunicorn app.server --pythonpath app --preload -b 0.0.0.0:5000
