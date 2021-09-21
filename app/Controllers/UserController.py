@@ -70,7 +70,7 @@ class User():
             'nome': self.name,
             'email': self.email,
             }
-            return user
+            return responseHandler.success(content = user)
         except:
             return responseHandler.error(content='Erro no servidor!')
 
