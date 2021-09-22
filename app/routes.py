@@ -17,7 +17,6 @@ element = Element()
 plant = Plant()
 
 @app.route('/')
-
 @app.route('/index')
 def index():
     return "Server ok"
