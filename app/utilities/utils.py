@@ -2,6 +2,8 @@ from datetime import datetime,timezone,timedelta
 from validate_email import validate_email
 import uuid
 import hashlib
+import string
+import random
 
 # Classe para funções uteis 
 class utils():
@@ -25,3 +27,14 @@ class utils():
     def dateCapture(self):
         date = (datetime.now().astimezone(timezone(timedelta(hours=-3)))).strftime('%Y/%m/%d')
         return date
+    
+    # Gera codigo aleatório
+    def codeGenerator(self):
+        size=8
+        chars=string.ascii_uppercase + string.digits
+        code = ''.join(random.choice(chars) for _ in range(size))
+        return code
+
+u = utils()
+
+print(u.codeGenerator())
