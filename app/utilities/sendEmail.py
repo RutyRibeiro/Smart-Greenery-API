@@ -74,7 +74,3 @@ class SendEmail():
             return responseHandler.success('Email enviado com Sucesso! Verifique sua caixa de entrada ou spam')
         except Exception as error:
             return responseHandler.error(content=error)
-
-
-# em = SendEmail()
-# print(em.sendEmail(token='213124234', email='rribeiropena@gmail.com'))
