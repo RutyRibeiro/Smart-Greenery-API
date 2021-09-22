@@ -1,7 +1,11 @@
+from logging import exception
+
+
 if __name__ == 'app.Controllers.UserController':
-    from ..Handlers.ResponseHandler import ResponseHandler
     from ..Controllers.GreenerysController import Greenery
+    from ..Handlers.ResponseHandler import ResponseHandler
     from ..Handlers.QueryHandler import QueryHandler
+    from ..utilities.sendEmail import SendEmail
     from ..utilities.validate import Validate
     from ..utilities.utils import utils
 else:
@@ -9,9 +13,10 @@ else:
     sys.path.append('..')
     from utilities.utils import utils
     from utilities.validate import Validate
+    from utilities.sendEmail import SendEmail
     from Handlers.QueryHandler import QueryHandler
-    from Controllers.GreenerysController import Greenery
     from Handlers.ResponseHandler import ResponseHandler
+    from Controllers.GreenerysController import Greenery
 
 responseHandler = ResponseHandler()
 Utils = utils()
@@ -23,6 +28,7 @@ class User():
         self.password =''
         self.name=''
         self.date=''
+        self.token=''
     
     def _validateUserLogin(self, user):
         try:
@@ -92,9 +98,6 @@ class User():
         except Exception as error:
              return responseHandler.error(title='Erro',content=str(error))
 
-    # def modify(self, user):
-    #     try:
-
     def login(self, user):
         try:
             validateUserLogin = self._validateUserLogin(user=user)
@@ -144,15 +147,38 @@ class User():
 
         except Exception as error:
             return responseHandler.error(content=str(error))
+    
+    def _sendEmail(self,user):
+        try:
+            self.token = Utils.codeGenerator()
+            sendingEmail = SendEmail()
+
+            email = sendingEmail.sendEmail(token=self.token, email=user)
+            print(email)
+
+            if email['status'] == 'erro':
+                return email
+        
+            return email
+        except Exception as error:
+            return responseHandler.error(content=error)
+    
+    def retrieve(self, user):
+        try:
+
+
+            return responseHandler.success(content='Conta recuperada com sucesso!')
+        except Exception as error:
+            return responseHandler.error(content=error)
 
 # user1={
 #         "email":"teste2@teste.com",
 #         "senha":"teste45",
 #         "nome": "ruty"
 #     }
-# usera=User()
+usera=User()
 
-# response = usera.register(user=user1)
-# print(response)
+response = usera._sendEmail('rribeiropena@gmail.com')
+print(response)
 
 
