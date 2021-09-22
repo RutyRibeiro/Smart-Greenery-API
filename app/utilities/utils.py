@@ -34,7 +34,3 @@ class utils():
         chars=string.ascii_uppercase + string.digits
         code = ''.join(random.choice(chars) for _ in range(size))
         return code
-
-u = utils()
-
-print(u.codeGenerator())
