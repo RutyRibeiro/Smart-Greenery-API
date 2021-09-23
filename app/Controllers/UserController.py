@@ -148,12 +148,11 @@ class User():
         except Exception as error:
             return responseHandler.error(content=str(error))
     
-    def _sendEmail(self,user):
+    def _sendEmail(self):
         try:
-            self.token = Utils.codeGenerator()
             sendingEmail = SendEmail()
 
-            email = sendingEmail.sendEmail(token=self.token, email=user)
+            email = sendingEmail.sendEmail(token=self.token, email=self.email)
             print(email)
 
             if email['status'] == 'erro':
@@ -163,22 +162,52 @@ class User():
         except Exception as error:
             return responseHandler.error(content=error)
     
-    def retrieve(self, user):
+    def _setToken(self):
         try:
+            self.token = Utils.codeGenerator()
 
+            queryHandler = QueryHandler()
 
-            return responseHandler.success(content='Conta recuperada com sucesso!')
+            queryResult = queryHandler.queryExec(operationType='update',variables=[self.email,self.token,Utils.dateCapture(days = 1)], proc='newToken')
+            print (queryResult)
+            if queryResult['status'] =='erro':
+                return queryResult
+            
+            return responseHandler.success(content='Token cadastrado')
+        
         except Exception as error:
             return responseHandler.error(content=error)
+        
+
+    def retrieve(self, user):
+        try:
+            self.email = user
+            
+            tkn = self._setToken()
+            if tkn['status'] == 'erro':
+                return tkn
+            
+            email = self._sendEmail()
+            if email['status'] == 'erro':
+                return email
+
+            return email
+        except Exception as error:
+            return responseHandler.error(content=error)
+
+    # def confirmRetrieve(self,user):
+    #     try:
+
+    #         return responseHandler.success("")
 
 # user1={
 #         "email":"teste2@teste.com",
 #         "senha":"teste45",
 #         "nome": "ruty"
 #     }
-usera=User()
+# usera=User()
 
-response = usera._sendEmail('rribeiropena@gmail.com')
-print(response)
+# response = usera.retrieve(user='marllondcsp@gmail.com')
+# print(response)
 
 
