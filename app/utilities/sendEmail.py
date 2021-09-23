@@ -39,27 +39,32 @@ class SendEmail():
             if login['status'] == 'erro':
                 return login
             message = f'''
-                            <div style="width:100%;background:#ededed;padding:25px 0">
-                            <table style=" border:2px solid #2f2f2f4a;
-                            border-top:2px solid #0FFF00;
-                            border-bottom:none;
-                            margin:0 auto;
-                            padding:25px 5px;
-                            text-align:center;
-                            max-width:620px;width:80%;background:#fff;    box-shadow: 4px 9px 15px -10px;">
-                            
-                            <tr>
-                                <td>Olá recupere sua conta na <span style="color:#0EAD2B; font-weight:bold">Smart-Greenery</span></td>
-                            </tr>
-                            <tr>
-                                <td>Seu código de acesso é:</td>
-                            </tr>
-                            <tr style="margin-top:25px">
-                                <td style="font-size:1.9rem;font-weight:bold">{token}</td>
-                            </tr>
-                            
-                            </table>
-                            </div>
+                        <div style="width:100%;background:#282828;padding:25px 0">
+                        <table style=" 
+                        border-top:2px solid #0FFF00;
+                        margin:0 auto;
+                        padding:25px 5px;
+                        text-align:center;
+                        max-width:620px;width:80%;background:#000; color:#fff;">
+                        
+                        <tr>
+                            <td>Recupere sua conta na <span style="color:#0EAD2B; font-weight:bold">Smart-Greenery</span></td>
+                        </tr>
+                        <tr>
+                            <td>Seu código de acesso é </td>
+                        </tr>
+                        <tr style="margin-top:25px">
+                            <td style="font-size:1.9rem;font-weight:bold">{token}</td>
+                        </tr>
+                        
+                        <tr>
+                            <td>
+                            Cole este código no aplicativo para recuperar sua senha
+                            </td>
+                        </tr>
+                        
+                        </table>
+                        </div>
                     '''
             email_msg = MIMEMultipart()
             email_msg['From'] = self.user
