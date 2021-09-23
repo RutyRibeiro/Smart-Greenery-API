@@ -24,9 +24,10 @@ class utils():
         return validate
 
     # Captura a data do sistema considerando fuso horario
-    def dateCapture(self):
-        date = (datetime.now().astimezone(timezone(timedelta(hours=-3)))).strftime('%Y/%m/%d')
-        return date
+    def dateCapture(self, days=0):
+        date = datetime.now().astimezone(timezone(timedelta(hours=-3, days=days)))
+        dateFormat = date.strftime('%Y/%m/%d') 
+        return dateFormat
     
     # Gera codigo aleatório
     def codeGenerator(self):
@@ -34,3 +35,8 @@ class utils():
         chars=string.ascii_uppercase + string.digits
         code = ''.join(random.choice(chars) for _ in range(size))
         return code
+    
+# u = utils()
+
+# print(u.dateCapture())
+
