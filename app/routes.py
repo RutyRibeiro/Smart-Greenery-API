@@ -36,12 +36,19 @@ def logUser():
 @app.route('/user/modify/', methods=['PUT'])
 @cross_origin(origin='*',headers=['Content-Type'])
 def modifyUser():
-    return 'O usuário foi alterado',300
+    response = ''
+    return response
 
 @app.route('/user/retrieve/', methods=['POST'])
 @cross_origin(origin='*',headers=['Content-Type'])
 def retrieveUser():
-    return 'Um email foi enviado para voc',300
+    email = request.headers.get('email') or False 
+    
+    if(email == False):
+        return responseHandler.error('Erro', 'Não foram enviadas as informações de email necessárias nos headers'), 400
+    
+    response = user.retrieve(user=email)
+    return response
 
 @app.route('/plant/register', methods=['POST'])
 @cross_origin(origin='*',headers=['Content-Type'])
