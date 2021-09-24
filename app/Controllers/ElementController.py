@@ -75,9 +75,6 @@ class Element():
 
             element = queryHandler.queryExec(operationType='select',variables=[idEstufa],proc='getElements')
             
-            if type(element) == dict:
-                raise Exception(element['mensagem']['conteudo'])
-            
             return element
                
         except Exception as error:

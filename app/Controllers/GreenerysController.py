@@ -41,12 +41,12 @@ class Greenery():
                             }
                 el = Element()
                 element = el.getElements(idEstufa=idestufa)
-                if type(element) == dict:
-                    raise Exception(element['mensagem']['conteudo'])
+                if element['status'] == 'erro':
+                    raise element
                 
                 elements = []
                 
-                for e in element:
+                for e in element['mensagem']['conteudo']:
                     elem = {
                             "idElem": e[0],
                             "ativo": e[1],
@@ -61,11 +61,11 @@ class Greenery():
                 pl = Plant()
                 plants = pl.getPlant(idGreen=idestufa)
                 
-                if type(plants) == dict:
+                if plants['status'] == 'erro':
                     return plants
                 
                 plan = []
-                for p in plants:
+                for p in plants['mensagem']['conteudo']:
                     plant = {"idPlanta": p[0],
                             "nomePlanta": p[1],
                             "dataPlanta": p[2],
@@ -110,10 +110,10 @@ class Greenery():
             queryHandler = QueryHandler()
             greenerys = queryHandler.queryExec(operationType='select',variables=[self.user_id],proc='getGreenerys')
             
-            if type(greenerys) == dict:
-                raise Exception(greenerys['mensagem']['conteudo'])
+            if greenerys['status'] == 'erro':
+                raise greenerys
 
-            formatedGreenerys = self._formatGreenerys(green = greenerys)
+            formatedGreenerys = self._formatGreenerys(green = greenerys['mensagem']['conteudo'])
 
             return responseHandler.success(content=formatedGreenerys)
 

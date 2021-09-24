@@ -89,9 +89,6 @@ class Plant():
 
             plants = queryHandler.queryExec(operationType='select',variables=[idGreen],proc='getPlant')
             
-            if type(plants) == dict:
-                return plants
-           
             return plants
 
         except Exception as error:
