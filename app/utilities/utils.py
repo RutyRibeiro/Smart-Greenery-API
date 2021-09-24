@@ -1,9 +1,10 @@
-from datetime import datetime,timezone,timedelta
-from validate_email import validate_email
+import time
 import uuid
-import hashlib
 import string
 import random
+import hashlib
+from validate_email import validate_email
+from datetime import datetime,timezone,timedelta
 
 # Classe para funções uteis 
 class utils():
@@ -36,7 +37,9 @@ class utils():
         code = ''.join(random.choice(chars) for _ in range(size))
         return code
     
-# u = utils()
-
-# print(u.dateCapture())
-
+    # função para comparar datas
+    def compareDates(self,expires):
+        date1 = time.strptime(self.dateCapture(), "%Y/%m/%d")
+        date2 = time.strptime(expires, "%Y/%m/%d")
+        
+        return (date1>date2)
