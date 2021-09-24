@@ -1,6 +1,3 @@
-from logging import exception
-
-
 if __name__ == 'app.Controllers.UserController':
     from ..Controllers.GreenerysController import Greenery
     from ..Handlers.ResponseHandler import ResponseHandler
@@ -47,23 +44,33 @@ class User():
         except Exception as error:
             return responseHandler.error(title='Erro',content=str(error))
     
-    def _userExistsAndValidatePassword(self):
+    def _userExists(self,email):
         try:
             queryHandler = QueryHandler()
 
-            queryResult = queryHandler.queryExec(operationType='select',variables=[self.email],proc='userLogin')
+            queryResult = queryHandler.queryExec(operationType='select',variables=[email],proc='userLogin')
 
-            if type(queryResult) == dict:
-                return queryResult
+            return queryResult
+        except Exception as error:
+            return responseHandler.error(content=error)
+    
+    def _userExistsAndValidatePassword(self):
+        try:
+            userExists = self._userExists(email=self.email)
 
-            if len(queryResult) == 0:
+            if userExists['status'] == 'error':
+                return userExists
+            
+            user = userExists['mensagem']['conteudo']
+
+            if len(user) == 0:
                     raise Exception('Credenciais inválidas!')
 
-            if Utils.passwordEncode(password = self.password) != queryResult[0][3]:
+            if Utils.passwordEncode(password = self.password) != user[0][3]:
                 raise Exception('Credenciais inválidas!')
 
-            self.id = queryResult[0][0]
-            self.name = queryResult[0][1]
+            self.id = user[0][0]
+            self.name = user[0][1]
 
             return responseHandler.success(title='Sucesso',content='Usuário existente no banco de dados')
         
@@ -126,7 +133,6 @@ class User():
             self.name = user['nome']
             self.password = Utils.passwordEncode(user['senha'])
             self.date = Utils.dateCapture()
-            # foto = user['photo']
             self.email = user['email']
 
             queryHandler = QueryHandler()
@@ -195,19 +201,43 @@ class User():
         except Exception as error:
             return responseHandler.error(content=error)
 
-    # def confirmRetrieve(self,user):
-    #     try:
+    def confirmRetrieve(self,user):
+        try:
+            validate = Validate()
 
-    #         return responseHandler.success("")
+            validateForm = validate.validateForm(form=user,param=['email','token'])
+
+            if validateForm['status'] == 'erro':
+                return validateForm
+            
+            queryResult = self._userExists(email=user['email'])
+
+            if queryResult['status'] == 'erro':
+                return queryResult
+            
+            userDB=queryResult['mensagem']['conteudo'][0]
+            token = userDB[5]
+            expires = userDB[6]
+        
+            tokenHasExpired = Utils.compareDates(expires=expires)
+
+            if tokenHasExpired:
+                return responseHandler.error(content='Seu código não é mais válido, crie um novo entrando em recuperar')
+            
+            if user['token'] != token:
+                return responseHandler.error(content='Código inválido!')
+            
+            return responseHandler.success(content='Código validado!')
+        except Exception as error:
+            return responseHandler.error(content=error)
 
 # user1={
-#         "email":"teste2@teste.com",
-#         "senha":"teste45",
-#         "nome": "ruty"
+#         "email":"rribeiropena@gmail.com",
+#         "token":"O9OIVMRD",
 #     }
 # usera=User()
 
-# response = usera.retrieve(user='marllondcsp@gmail.com')
+# response = usera.confirmRetrieve(user1)
 # print(response)
 
 
