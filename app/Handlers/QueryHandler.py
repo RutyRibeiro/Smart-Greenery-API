@@ -40,7 +40,7 @@ class QueryHandler():
                 if operationType =='select':
                     for result in self.cursor.stored_results():
                         row = result.fetchall() 
-                    return row  
+                    return self.responseHandler.success(content=row) 
                 else:
                     return self.responseHandler.success(title='Sucesso', content = 'Operação realizada com sucesso!')
         
