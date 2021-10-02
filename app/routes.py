@@ -36,7 +36,7 @@ def logUser():
 @app.route('/user/modify/', methods=['PUT'])
 @cross_origin(origin='*',headers=['Content-Type'])
 def modifyUser():
-    response = ''
+    response = user.modify(request.get_json())
     return response
 
 @app.route('/user/retrieve/', methods=['POST'])
