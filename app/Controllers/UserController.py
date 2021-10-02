@@ -231,13 +231,37 @@ class User():
         except Exception as error:
             return responseHandler.error(content=error)
 
+    def modify(self,user):
+        try:
+            valida = Validate()
+
+            validateForm = valida.validateForm(user,['email','nome'])
+            if validateForm['status'] =='erro':
+                return validateForm
+            
+            email = user['email']
+            nome = user['nome']
+            senha = Utils.passwordEncode(user['senha'])
+            
+            queryHandler= QueryHandler()
+
+            queryResult = queryHandler.queryExec(operationType='update',proc='userModify',variables=[email,senha,nome])
+
+            if queryResult['status'] == 'erro':
+                return queryResult
+            return responseHandler.success(content='Alterações realizadas com sucesso!')
+        
+        except Exception as error:
+            return responseHandler.error(content=error)
+
 # user1={
 #         "email":"rribeiropena@gmail.com",
-#         "token":"O9OIVMRD",
+#         "nome":"Ruty Ribeiro Pena",
+#         "senha":""
 #     }
 # usera=User()
 
-# response = usera.confirmRetrieve(user1)
+# response = usera.modify(user1)
 # print(response)
 
 
