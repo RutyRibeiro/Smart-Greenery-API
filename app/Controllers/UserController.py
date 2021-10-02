@@ -241,8 +241,7 @@ class User():
             
             email = user['email']
             nome = user['nome']
-            if user['senha'] == '':
-                senha = Utils.passwordEncode(user['senha'])
+            senha = Utils.passwordEncode(user['senha']) if user['senha'] != '' else ''
             
             queryHandler= QueryHandler()
 
