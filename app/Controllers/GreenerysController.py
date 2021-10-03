@@ -28,8 +28,14 @@ class Greenery():
         self.date=''
         self.user_id = ''
     
-    def _formatGreenerys(self,green):
+    def formatGreenerys(self,userId):
         try:
+            getGreen = self.getGreenerys(userId=userId) 
+
+            if getGreen['status'] =='erro':
+                return getGreen
+            
+            green = getGreen['mensagem']['conteudo']
             data=[] 
             for greenery in green:
                 idestufa = greenery[0]
@@ -59,7 +65,7 @@ class Greenery():
                 greenery['elementos'] = elements
                 
                 pl = Plant()
-                plants = pl.getPlant(idGreen=idestufa)
+                plants = pl.getPlants(idGreen=idestufa)
                 
                 if plants['status'] == 'erro':
                     return plants
@@ -91,8 +97,15 @@ class Greenery():
             self.name= form['estufa-nome']
             self.id = form['estufa-id']
 
-            queryHandler = QueryHandler()
+            getGreenery = self.getGreenerys(greenId=self.id)
 
+            if getGreenery['status'] == 'erro':
+                return getGreenery
+            
+            if len(getGreenery['mensagem']['conteudo']) == 0:
+                raise Exception ('Estufa não cadastrada!')
+
+            queryHandler = QueryHandler()
             modify = queryHandler.queryExec(operationType='update',proc='greeneryModify', variables=[self.name,self.id])
 
             if modify['status'] == 'erro':
@@ -103,19 +116,14 @@ class Greenery():
         except Exception as error:
             return responseHandler.error(content=error)
     
-    def getGreenerys(self, userId):
+    def getGreenerys(self, userId='', greenId=''):
         try:
             self.user_id = userId
 
             queryHandler = QueryHandler()
-            greenerys = queryHandler.queryExec(operationType='select',variables=[self.user_id],proc='getGreenerys')
+            greenerys = queryHandler.queryExec(operationType='select',variables=[self.user_id,greenId],proc='getGreenerys')
             
-            if greenerys['status'] == 'erro':
-                raise greenerys
-
-            formatedGreenerys = self._formatGreenerys(green = greenerys['mensagem']['conteudo'])
-
-            return responseHandler.success(content=formatedGreenerys)
+            return greenerys
 
         except Exception as error:
             return responseHandler.error(content=error)
