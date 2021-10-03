@@ -57,6 +57,14 @@ class Element():
             self.name= form['elemento-nome']
             self.id = form['elemento-id']
 
+            getElements = self.getElements(idElem=self.id)
+
+            if getElements['status'] == 'erro':
+                return getElements
+            
+            if len(getElements['mensagem']['conteudo']) == 0:
+                raise Exception('Elemento não cadastrado!')
+
             queryHandler = QueryHandler()
 
             modify = queryHandler.queryExec(operationType='update',proc='elementModify', variables=[self.name,self.id])
@@ -69,11 +77,11 @@ class Element():
         except Exception as error:
             return responseHandler.error(content=str(error))
 
-    def getElements(self, idEstufa):
+    def getElements(self, idEstufa='', idElem=''):
         try:
             queryHandler = QueryHandler()
 
-            element = queryHandler.queryExec(operationType='select',variables=[idEstufa],proc='getElements')
+            element = queryHandler.queryExec(operationType='select',variables=[idEstufa,idElem],proc='getElements')
             
             return element
                
