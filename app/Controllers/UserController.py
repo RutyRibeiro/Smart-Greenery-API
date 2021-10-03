@@ -242,6 +242,14 @@ class User():
             email = user['email']
             nome = user['nome']
             senha = Utils.passwordEncode(user['senha']) if user['senha'] != '' else ''
+
+            userExists = self._userExists(email=email)
+
+            if userExists['status'] == 'erro':
+                return userExists
+            
+            if len(userExists['mensagem']['conteudo']) == 0:
+                raise Exception('Email informado não está cadastrado!') 
             
             queryHandler= QueryHandler()
 
@@ -255,8 +263,8 @@ class User():
             return responseHandler.error(content=error)
 
 # user1={
-#         "email":"rribeiropena@gmail.com",
-#         "nome":"Ruty Ribeiro Pena",
+#         "email":"marllondcsp@gmail.com",
+#         "nome":"Marllon Capos",
 #         "senha":""
 #     }
 # usera=User()
