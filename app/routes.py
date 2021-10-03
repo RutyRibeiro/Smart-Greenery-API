@@ -1,4 +1,3 @@
-from app.Controllers.GreenerysController import Greenery
 import sys
 sys.path.append('../')
 from app import app
@@ -86,7 +85,7 @@ def getGreenery():
     if(userId == False):
         return responseHandler.error(content = 'Não foram enviadas as informações de estufa necessárias nos headers'), 400
    
-    return  greenery.getGreenerys(userId=userId)
+    return  greenery.formatGreenerys(userId=userId)
 
 @app.route('/greenery/modify/', methods=['PUT'])
 @cross_origin(origin='*',headers=['Content-Type'])
