@@ -73,6 +73,14 @@ class Plant():
             self.id = plant['id-planta']
             self.name = plant['nome-planta']
 
+            getPlant = self.getPlants(idPlant=self.id)
+
+            if getPlant['status'] == 'erro':
+                return getPlant
+            
+            if len(getPlant['mensagem']['conteudo']) == 0:
+                raise Exception('Planta não Cadastrada!')
+
             queryHandler = QueryHandler()
             modifyPlant = queryHandler.queryExec(proc='plantModify',variables=[self.id,self.name], operationType='update')
             
@@ -83,11 +91,11 @@ class Plant():
         except Exception as error:
             return responserHandler.error(content=error)
     
-    def getPlant(self,idGreen):
+    def getPlants(self,idGreen='',idPlant=''):
         try:
             queryHandler = QueryHandler()
 
-            plants = queryHandler.queryExec(operationType='select',variables=[idGreen],proc='getPlant')
+            plants = queryHandler.queryExec(operationType='select',variables=[idGreen,idPlant],proc='getPlant')
             
             return plants
 
@@ -95,5 +103,5 @@ class Plant():
             return responserHandler.error(content=error)
 
 # p=Plant()
-# print(p.getPlant(idGreen='6db7e7cd-98d2-11eb-968d-f5069c8e6f2b'))
+# print(p.modifyPlant(idGreen='6db7e7cd-98d2-11eb-968d-f5069c8e6f2b'))
     
