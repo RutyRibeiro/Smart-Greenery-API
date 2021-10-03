@@ -81,7 +81,7 @@ class Greenery():
                 greenery['plantas'] = plan
 
                 data.append(greenery)
-            return data
+            return responseHandler.success(content = data)
         except Exception as error:
             return responseHandler.error(content=error)
     
